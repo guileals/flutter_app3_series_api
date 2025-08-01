@@ -111,22 +111,21 @@ class _TvShowScreenState extends State<TvShowScreen> {
                         child: Text('VOLTAR'),
                       ),
                       SizedBox(width: 16),
-                      tvShowModel.tvShows.any((show) => show.id == tvShow.id)
-                          ? ElevatedButton(
-                              onPressed: () {
-                                tvShowModel.removeTvShow(tvShow, context);
-                                context.go('/');
-                              },
-                              child: Text('DESFAVORITAR'),
-                            )
-                          : ElevatedButton(
-                              onPressed: () {
-                                tvShowModel.addTvShow(tvShow, context);
-                                context.go('/');
-                              },
-                              child: Text('FAVORITAR'),
-                            ),
-                      SizedBox(width: 16),
+                      FutureBuilder<bool>(
+                        future: tvShowModel.isFavorite(tvShow),
+                        builder: (context, snapshot) {
+                          final isFavorite = snapshot.data ?? false;
+                          return ElevatedButton(
+                            onPressed: () {
+                              isFavorite
+                                  ? tvShowModel.removeFromFavorites(tvShow)
+                                  : tvShowModel.addToFavorites(tvShow);
+                            },
+                            child: Text(isFavorite ? 'DESFAVORITAR' : 'FAVORITAR'),
+                          );
+                        },
+                      ),
+                      SizedBox(width: 32),
                     ],
                   ),
                 ],
